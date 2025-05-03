@@ -6,15 +6,18 @@ import crypto from 'crypto'
 
 // #region 📂 Common functions
 
-// upload file to img.jsondeepl.com
-export async function uploadFile(dir: string, file: File) {
+// upload file to private storage
+export async function upload(dir: string, file: File, isPublic: boolean) {
   try {
+    const storagePath = isPublic
+      ? import.meta.env.VITE_PUBLIC_STORAGE_PATH
+      : import.meta.env.VITE_PRIVATE_STORAGE_PATH
     const fileExtension = path.extname(file.name) // Extract file extension
     const uniqueName = crypto.randomUUID() + fileExtension
     const trimmedDir = trimDir(dir) // Trim the directory path
 
     // Determine upload path based on environment
-    const dirPath = path.join(import.meta.env.VITE_PRIVATE_STORAGE_PATH, trimmedDir)
+    const dirPath = path.join(storagePath, trimmedDir)
     const uploadPath = path.join(dirPath, uniqueName)
     await ensureDirectoryExists(dirPath) // Ensure the directory exists
 
@@ -29,7 +32,12 @@ export async function uploadFile(dir: string, file: File) {
       })
     }) // Write the file to disk
 
-    return `${trimmedDir}/${uniqueName}`
+    return {
+      path: `${trimmedDir}/${uniqueName}`,
+      name: file.name,
+      mime: file.type,
+      url: isPublic ? `${import.meta.env.VITE_URL}/${trimmedDir}/${uniqueName}` : '',
+    }
   } catch (error: any) {
     throw new Error(`Error uploading file: ${error.message}`)
   }

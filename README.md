@@ -58,8 +58,6 @@ and then copy the `app.mjs` from `dist` directory and upload it to your domain d
 - Set application startup file to `app.mjs`
 - Enable the node.js application and that's it! (you don't need to install or run any commands)
 
-Here's a cleaner and more concise rewrite:
-
 ---
 
 ## API Endpoints
