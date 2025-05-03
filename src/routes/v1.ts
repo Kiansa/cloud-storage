@@ -14,7 +14,7 @@ const app = new Hono()
       console.log('body', body)
       const file = body['file']
       const dir = body['dir']
-      const isPublic = body['public'] || false
+      const storage = body['storage'] ?? 'private'
       if (!file) {
         console.log('file is empty')
         return c.text('files cannot be empty!', 400)
@@ -23,7 +23,7 @@ const app = new Hono()
         console.log('file is string')
         return c.text('Invalid file type!', 400)
       }
-      const result = await upload(dir as string, file as File, isPublic as boolean)
+      const result = await upload(dir as string, file as File, storage as 'private' | 'public')
       return c.json(result)
     } catch (error: any) {
       return c.text(`Error uploading file: ${error.message}`, 500)

@@ -58,6 +58,19 @@ and then copy the `app.mjs` from `dist` directory and upload it to your domain d
 - Set application startup file to `app.mjs`
 - Enable the node.js application and that's it! (you don't need to install or run any commands)
 
+7. In order to avoid CORS issues, create a .htaccess file in the `public` folder and add the following lines:
+
+```apache
+<IfModule mod_headers.c>
+  <FilesMatch ".*">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+  </FilesMatch>
+</IfModule>
+
+```
+
 ---
 
 ## API Endpoints
@@ -73,7 +86,7 @@ All requests require Bearer token authentication.
 
 - `file`: File (required) – The file to upload
 - `dir`: string (required) – Destination directory (e.g., `"images"`, `"foo/bar"`)
-- `public`: boolean (optional) – Set to `true` to make the file publicly accessible
+- `storage`: 'private' | 'public' (optional. defaults to 'private') – Set to `'public'` to make the file publicly accessible
 
 **Response:**
 

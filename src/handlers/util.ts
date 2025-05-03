@@ -7,11 +7,12 @@ import crypto from 'crypto'
 // #region 📂 Common functions
 
 // upload file to private storage
-export async function upload(dir: string, file: File, isPublic: boolean) {
+export async function upload(dir: string, file: File, storage: 'private' | 'public') {
   try {
-    const storagePath = isPublic
-      ? import.meta.env.VITE_PUBLIC_STORAGE_PATH
-      : import.meta.env.VITE_PRIVATE_STORAGE_PATH
+    const storagePath =
+      storage === 'public'
+        ? import.meta.env.VITE_PUBLIC_STORAGE_PATH
+        : import.meta.env.VITE_PRIVATE_STORAGE_PATH
     const fileExtension = path.extname(file.name) // Extract file extension
     const uniqueName = crypto.randomUUID() + fileExtension
     const trimmedDir = trimDir(dir) // Trim the directory path
@@ -36,7 +37,7 @@ export async function upload(dir: string, file: File, isPublic: boolean) {
       path: `${trimmedDir}/${uniqueName}`,
       name: file.name,
       mime: file.type,
-      url: isPublic ? `${import.meta.env.VITE_URL}/${trimmedDir}/${uniqueName}` : '',
+      url: storage === 'public' ? `${import.meta.env.VITE_URL}/${trimmedDir}/${uniqueName}` : '',
     }
   } catch (error: any) {
     throw new Error(`Error uploading file: ${error.message}`)
