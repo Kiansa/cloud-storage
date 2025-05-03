@@ -48,9 +48,9 @@ npm run dev
 npm run build
 ```
 
-and then copy the `app.mjs` in the `dist` directory to your domain directory of the server.
+and then copy the `app.mjs` from `dist` directory and upload it to your domain directory of the server.
 
-6. Run it on your server:
+6. How to run it on your server:
 
 - Enable the node extenstion on your domain or subdomain (e.g. cloud.yourdomain.com)
 - Set the document root to the `public` folder (create it if not exists) (e.g. /cloud.yourdomain.com/public)
@@ -58,37 +58,53 @@ and then copy the `app.mjs` in the `dist` directory to your domain directory of 
 - Set application startup file to `app.mjs`
 - Enable the node.js application and that's it! (you don't need to install or run any commands)
 
+Here's a cleaner and more concise rewrite:
+
+---
+
 ## API Endpoints
 
-All endpoints require Bearer token authentication.
+All requests require Bearer token authentication.
 
-### Upload File
+### POST `/v1/upload` – Upload File to Storage
 
-```http
-POST /v1/upload
-Content-Type: multipart/form-data
+**Headers:**
+`Content-Type: multipart/form-data`
 
-Parameters:
-- file: File (required)
-- dir: string (optional) - Target directory
+**Body Parameters:**
 
-Returns: file path
+- `file`: File (required) – The file to upload
+- `dir`: string (required) – Destination directory (e.g., `"images"`, `"foo/bar"`)
+- `public`: boolean (optional) – Set to `true` to make the file publicly accessible
+
+**Response:**
+
+```json
+{
+  "path": "string",    // File storage path
+  "name": "string",    // Original file name
+  "mime": "string",    // MIME type
+  "url": "string"      // Public URL if `public` is true, otherwise empty
+}
 ```
 
-### Get File
+---
 
-```http
-GET /v1/storage/:filepath
+### GET `/v1/storage/:filepath` – Retrieve File
 
-Returns: File with metadata
-```
+**Response:**
+Returns the requested file along with metadata.
 
-### Delete File
+---
 
-```http
-DELETE /v1/storage/:filepath
+### DELETE `/v1/storage/:filepath` – Delete File
 
-Returns: Success message
+**Response:**
+
+```json
+{
+  "message": "File deleted successfully"
+}
 ```
 
 ## Environment Variables
@@ -96,7 +112,7 @@ Returns: Success message
 - `VITE_API_TOKEN`: Authentication token for API access
 - `VITE_URL`: Base URL of the service
 - `VITE_PRIVATE_STORAGE_PATH`: Path for private file storage
-- `VITE_PUBLIC_STORAGE_PATH`: Path for public file storage
+- `VITE_PUBLIC_STORAGE_PATH`: Path for public file storage (accessible via URL)
 
 ## Tech Stack
 
